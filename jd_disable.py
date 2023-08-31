@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 """
-cron: 20 10 */7 * *
+cron: 20 10 * * *
 new Env('禁用重复任务');
 """
 
@@ -28,7 +28,7 @@ if not ipport:
     ipport = "localhost:5700"
 else:
     ipport = ipport.lstrip("http://").rstrip("/")
-sub_str = os.getenv("RES_SUB", "LingFeng0918_LF_JD")
+sub_str = os.getenv("RES_SUB", "KingRan_KR")
 sub_list = sub_str.split("&")
 res_only = os.getenv("RES_ONLY", True)
 headers = {
@@ -58,7 +58,10 @@ def get_tasklist() -> list:
     response = requests.get(url=url, headers=headers)
     datas = json.loads(response.content.decode("utf-8"))
     if datas.get("code") == 200:
-        tasklist = datas.get("data")
+        try:
+            tasklist = datas.get("data").get("data")
+        except Exception:
+            tasklist = datas.get("data")
     return tasklist
 
 
@@ -90,10 +93,7 @@ def get_duplicate_list(tasklist: list) -> tuple:
     names = []
     cmds = []
     for task in tasklist:
-        if flag1:
-            ids.append(task.get("_id"))
-        else:
-            ids.append(task.get("id"))
+        ids.append(task.get("_id",task.get("id")))
         names.append(task.get("name"))
         cmds.append(task.get("command"))
 
@@ -123,7 +123,7 @@ def get_duplicate_list(tasklist: list) -> tuple:
 
 
 def reserve_task_only(
-        tem_ids: list, tem_tasks: list, dup_ids: list, res_list: list
+    tem_ids: list, tem_tasks: list, dup_ids: list, res_list: list
 ) -> list:
     if len(tem_ids) == 0:
         return tem_ids
@@ -133,10 +133,7 @@ def reserve_task_only(
     for task1 in tem_tasks:
         for task2 in res_list:
             if task1.get("name") == task2.get("name"):
-                if flag1:
-                    dup_ids.append(task1.get("_id"))
-                else:
-                    dup_ids.append(task1.get("id"))
+                dup_ids.append(task1.get("_id",task1.get("id")))
                 logger.info(f"【✅保留】{task2.get('command')}")
                 task3 = task1
         if task3:
@@ -209,4 +206,4 @@ if __name__ == "__main__":
     else:
         disable_duplicate_tasks(ids)
     #if send:
-    #send("💖禁用重复任务成功", f"\n{sum}\n{filter}\n{disable}")
+        #send("💖禁用重复任务成功", f"\n{sum}\n{filter}\n{disable}")

@@ -1,5 +1,6 @@
 /*
 ================================================================================
+魔改自 https://github.com/shufflewzc/faker2/blob/main/jdCookie.js
 修改内容：与task_before.sh配合，由task_before.sh设置要设置要做互助的活动的 ShareCodeConfigName 和 ShareCodeEnvName 环境变量，
         然后在这里实际解析/ql/log/.ShareCode中该活动对应的配置信息（由code.sh生成和维护），注入到nodejs的环境变量中
 修改原因：原先的task_before.sh直接将互助信息注入到shell的env中，在ck超过45以上时，互助码环境变量过大会导致调用一些系统命令
@@ -11,7 +12,6 @@
  */
 //此处填写京东账号cookie。
 let CookieJDs = [
-    'pt_key=app_openAAJiEuskADCEXYVd_H0m10rBN4OH9OaM0fN1yuAsc0N7-tpNsAX1TR2eff4QzfS0b0tj-p-HF6A;pt_pin=jd_50f2be46743fc;'
 ]
 // 判断环境变量里面是否有京东ck
 if (process.env.JD_COOKIE) {
@@ -97,4 +97,7 @@ let nameConfig = process.env.ShareCodeConfigName
 let envName = process.env.ShareCodeEnvName
 if (nameChinese && nameConfig && envName) {
   SetShareCodesEnv(nameChinese, nameConfig, envName)
+} else {
+    console.debug(`KingRan 频道通知：https://t.me/KingRan521\n`)
+		console.debug(`云服务器IP须知：域名前缀为 'lzdz' 的禁用勿跑容易黑号\n`)
 }
